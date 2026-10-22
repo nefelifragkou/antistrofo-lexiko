@@ -5,13 +5,16 @@
     HF_TOKEN  = "hf_..."                         (κλειδί ανάγνωσης από το Hugging Face)
     DATA_REPO = "όνομα-χρήστη/antistrofo-lexiko-data"
 """
+import csv
 import html
+import io
 import os
 
 import streamlit as st
 from huggingface_hub import hf_hub_download, list_repo_files
 
 from encoder import OnnxE5
+from evaluate import evaluate, summary
 from search import ReverseDictionary
 
 st.set_page_config(page_title="Αντίστροφο Λεξικό", page_icon="📖", layout="centered")
@@ -65,6 +68,29 @@ with st.form("search"):
 if q.strip():
     results = rd.search(q, k=10)
     st.markdown("".join(card(i, r) for i, r in enumerate(results, 1)), unsafe_allow_html=True)
+
+with st.expander("Αξιολόγηση (για την εργασία)"):
+    st.write("Ανέβασε ένα CSV με στήλες **target** (σωστή λέξη) και **description** (περιγραφή). "
+             "Προαιρετικά: **difficulty**, **pos**, **same_root** για αποτελέσματα ανά ομάδα.")
+    up = st.file_uploader("Αρχείο CSV", type="csv")
+    if up is not None:
+        rows = list(csv.DictReader(io.StringIO(up.getvalue().decode("utf-8-sig"))))
+        with st.spinner(f"Τρέχω {len(rows)} περιγραφές…"):
+            res = evaluate(rd, rows)
+        fmt = {"Σωστή 1η": "{:.0%}", "Σωστή στις 10": "{:.0%}", "MRR": "{:.2f}"}
+        st.subheader("Σύνολο")
+        st.dataframe([dict(t, **{k: fmt[k].format(t[k]) for k in fmt}) for t in summary(res)], hide_index=True)
+        for col, title in [("difficulty", "Ανά δυσκολία"), ("pos", "Ανά είδος λέξης"), ("same_root", "Περιγραφή με λέξη της ίδιας ρίζας")]:
+            if rows and col in rows[0]:
+                st.subheader(title)
+                st.dataframe([dict(t, **{k: fmt[k].format(t[k]) for k in fmt}) for t in summary(res, by=col)], hide_index=True)
+        st.subheader("Ανά περιγραφή")
+        st.dataframe([{"#": r.get("id", i), "Λέξη": r["target"], "Θέση": r["rank"] or "—", "Περιγραφή": r["description"],
+                       "10 πρώτες": r["top10"]} for i, r in enumerate(res, 1)], hide_index=True)
+        buf = io.StringIO()
+        w = csv.DictWriter(buf, fieldnames=list(res[0].keys())); w.writeheader(); w.writerows(res)
+        st.download_button("Κατέβασε τα αποτελέσματα (CSV)", buf.getvalue().encode("utf-8-sig"),
+                           file_name="eval_results_dictionary.csv", mime="text/csv")
 
 st.caption("Ορισμοί: Λεξικό της Κοινής Νεοελληνικής, Ινστιτούτο Νεοελληνικών Σπουδών (ΑΠΘ), μέσω glossAPI — "
            "άδεια CC BY-NC-ND 4.0, μη εμπορική χρήση. Αναζήτηση με νόημα: intfloat/multilingual-e5-large. "
