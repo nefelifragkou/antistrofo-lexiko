@@ -5,7 +5,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 from openpyxl.worksheet.datavalidation import DataValidation
 
-root = Path(__file__).resolve().parent.parent
+root = Path(__file__).resolve().parent
 S = [json.loads(l) for l in open(root / "data/processed/senses.jsonl", encoding="utf-8")]
 E = [json.loads(l) for l in open(root / "data/processed/excluded.jsonl", encoding="utf-8")]
 stats = json.load(open(root / "data/processed/stats.json", encoding="utf-8"))

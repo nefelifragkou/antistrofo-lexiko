@@ -250,5 +250,5 @@ nb = {"cells": cells, "metadata": {"accelerator": "GPU", "colab": {"provenance":
       "nbformat": 4, "nbformat_minor": 0}
 out = Path(__file__).parent / "step4_embeddings.ipynb"
 out.write_text(json.dumps(nb, ensure_ascii=False, indent=1), encoding="utf-8")
-json.dump(DEV_QUERIES, open(Path(__file__).parent.parent / "docs/dev_queries.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+json.dump(DEV_QUERIES, open(Path(__file__).parent / "dev_queries.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 print("ok", out)

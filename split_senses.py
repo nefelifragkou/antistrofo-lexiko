@@ -570,5 +570,5 @@ def main(parquet_path, out_dir):
 
 
 if __name__ == "__main__":
-    root = Path(__file__).resolve().parent.parent
+    root = Path(__file__).resolve().parent
     main(root / "data/raw/modern-greek-dictionary.parquet", root / "data/processed")
