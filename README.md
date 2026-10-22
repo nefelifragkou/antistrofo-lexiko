@@ -5,7 +5,7 @@
 Ο χρήστης περιγράφει μια έννοια («ο φόβος για κλειστούς χώρους») και παίρνει **10 υποψήφιες λέξεις
 με τον ορισμό τους** από το Λεξικό της Κοινής Νεοελληνικής («κλειστοφοβία»).
 
-- **Εφαρμογή:** ΣΥΝΔΕΣΜΟΣ_STREAMLIT
+- **Εφαρμογή:** (https://antistrofo-lexiko-atsyfrar5ssmug7jiumjtu.streamlit.app/)
 - **Οδηγός χρήσης:** [USER_GUIDE.md](USER_GUIDE.md)
 - **Βασικά prompts προς τον coding agent:** [PROMPTS.md](PROMPTS.md)
 
