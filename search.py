@@ -29,8 +29,7 @@ class ReverseDictionary:
             if s["lemma"] in seen:  # μία φορά κάθε λέξη, με την πιο κοντινή σημασία της
                 continue
             seen.add(s["lemma"])
-            results.append(dict(word=s["headword"], lemma=s["lemma"], alt_forms=s.get("alt_forms", []),
-                                code=s["code"], labels=s["labels"],
+            results.append(dict(word=s["headword"], lemma=s["lemma"], code=s["code"], labels=s["labels"],
                                 definition=s["definition"], synonyms=s["synonyms"], score=float(scores[i])))
             if len(results) == k:
                 break
